@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.1;
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 contract MultiSigWallet {
     uint256 constant NO_OF_APPROVAL = 2;
@@ -31,6 +32,14 @@ contract MultiSigWallet {
     }
 
     function removeApprover(address _approverAddress) external isApprover {
+        require(
+            approversCount >= NO_OF_APPROVAL,
+            string.concat(
+                "Can't remove. Atleast ",
+                Strings.toString(NO_OF_APPROVAL),
+                " approvers are needed."
+            )
+        );
         delete approvers[_approverAddress];
         approversCount--;
     }
