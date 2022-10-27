@@ -6,7 +6,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 contract MultiSigWallet {
     uint256 constant NO_OF_APPROVAL = 2;
     mapping(address => bool) public approvers;
-    uint8 approversCount;
+    uint8 public approversCount;
     mapping(address => transfer) public transfers;
 
     constructor() {
@@ -24,6 +24,10 @@ contract MultiSigWallet {
     modifier isApprover() {
         require(approvers[msg.sender], "You must be a approver");
         _;
+    }
+
+    function doesApproverExist(address _addr) external view returns (bool) {
+        return approvers[_addr];
     }
 
     function addApprover(address _approverAddress) external isApprover {
@@ -66,6 +70,14 @@ contract MultiSigWallet {
         if (transfers[_toAddress].approvalsCount == NO_OF_APPROVAL) {
             processTransfer(_toAddress);
         }
+    }
+
+    function checkTransferStatus(address _toAddress)
+        external
+        view
+        returns (bool)
+    {
+        return transfers[_toAddress].status;
     }
 
     receive() external payable {}
